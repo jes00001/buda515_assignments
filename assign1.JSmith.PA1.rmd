@@ -1,0 +1,100 @@
+---
+title: 'Assignment 1: Data Tools'
+output:
+  html_document: default
+  pdf_document: default
+  html_notebook: default
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(warn=-1)
+```
+
+#### Assignment Start: 12:01 AM Oct. 10
+#### Assignment End: 11:59 PM Oct. 27
+
+#### Explain your code where appropriate.
+
+Reference: [UCI Machine Learning Repository: Wine Dataset](https://archive.ics.uci.edu/ml/datasets/Wine)
+
+The wine data set consists of chemical measurements on 13 constituents found in each of the three types of wines (cultivars) grown in the same region of Italy.
+
+1. Compute the Alcohol means by `Cultivar`. Briefly discuss the mean differences among the cultivars.
+```{r, message=FALSE, warning=FALSE}
+wine <- read.csv("wine.csv")
+
+# Only cultivar and alcohol are needed
+cultivar <- as.factor( wine[, "Cultivar"])
+alcohol <- wine[, "Alcohol"]
+
+# Split `alcohol` by `cultivar` to form a list with each element containing the data for a group.
+# Look at the function `sapply`.
+# Put your R code here.
+
+
+AlcByCult<- cbind(cultivar, alcohol)
+sapply(split(alcohol, cultivar), mean)
+
+
+```
+
+I combined the alcohol and cultivar into a matrix called $AlcByCult$ using the 'cbind' function.  From there, I used the 'sapply' function to calculate the mean alcohol per cultivar.
+
+```{r}
+plot(alcohol~cultivar)
+
+```
+
+I ran a plot of the alcohol vs cultivar to confirm the calculated values of mean were correct.  They are, so we may assume this method provides the correct result.
+
+
+
+2. Compute the number of observations in each `cultivar`.
+```{r, message=FALSE, warning=FALSE}
+# See comments for 1. above.
+# Put your R code here.
+
+library(dplyr)
+wine %>%
+  group_by(Cultivar) %>%
+  summarize(n())
+
+
+```
+
+Going back to the original data set, I was able to use dplyr functions to group and summarize the data by Cultivar.
+
+
+
+3.  Create a function to perform a one-way analysis of variance. The input argument `z` should be a list consisting of (possibly) named components, one for each group. The output should be a named list containing components for the between SS ($SS_B$), the within SS ($SS_W$), the between degrees of freedom, and the within degrees of freedom.  
+Note: $SS_B = \sum_i n_i (\bar{y}_i - \bar{y})^2$ and $SS_W = \sum_i (n_i - 1) s_i^2$ where $n_i$ is the sample size of group $i$, $\bar{y}_i$ is the mean of group $i$, and  $s_i^2$ is the variance of group $i$. These group statistics can easily be computed using `sapply`. For the grand mean, $\bar{y}$, think about using `unlist` on `z`. Let $g$ be the number of groups and $n = \sum_i n_i$ be the total sample size, which can also be computed by `unlist`ing `z`. $n$ and $g$ are needed to compute the between and within degrees of freedom.  
+Note: The code should be general for any $g$ and $n_i$. 
+```{r, message=FALSE, warning=FALSE}
+# Look at sapply for summarizing over the elements of a list.
+oneway <- function(z){
+# Put your R code here.
+}
+```
+
+4.  Create a function to summarize the output in a one-way ANOVA table, including the F test and $p$-value. The input argument is the output named list in the previous question. The output should be one-way ANOVA table.  
+Note: For computing the $p$-value look at the R function `pf`.
+```{r, message=FALSE, warning=FALSE}
+# For your output, mimic the tabular output of the builtin `summary` function applied to the output of the builtin `aov` function.
+# Look at the function `printCoefmat` to form a table.
+oneway.table <- function(x){
+# Put your R code here.
+}
+```
+
+5. Your functions should be illustrated with the `wine` data set. The data consists of 178 samples measuring alcohol (the outcome variable) divided among three (3) cultivars (the input variable).
+```{r, message=FALSE, warning=FALSE}
+# Split `alcohol` by `cultivar` to call `oneway`.
+# Put your R code here.
+```
+You should provide brief explanations of the output. Compare the output to that obtained from the standard R functions `aov` and `summary`.
+
+
+
